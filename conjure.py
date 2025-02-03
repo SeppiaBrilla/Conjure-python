@@ -81,7 +81,8 @@ class Conjure:
             raise Exception(shell_output.stderr.decode('utf-8'))
         return shell_output.stdout.decode('utf-8')
 
-    def available(self) -> bool:
+    @staticmethod
+    def available() -> bool:
         try:
             shell_out = subprocess.run(["conjure", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return_code = shell_out.returncode
@@ -111,6 +112,6 @@ such that forAll i : int(2..b) . CA[..,i-1] <=lex CA[..,i]
     instance = json.dumps({'t' : 3, 'g' : 2, 'k' : 5, 'b' : 8})
 
     conjure = Conjure()
-    print(f'conjure available: {conjure.available()}')
+    print(f'conjure available: {Conjure.available()}')
     print(conjure.solve(model, instance))
     print(conjure.pretty_print(model,'astjson'))
