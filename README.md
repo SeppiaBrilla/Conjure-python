@@ -1,4 +1,4 @@
-# Welcome to Essence python!
+# Welcome to Conjure-python!
 
 This python library allow you to blend your python app with conjure and find solutions for your models.
 
