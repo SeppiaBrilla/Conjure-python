@@ -2,16 +2,14 @@ import json
 from copy import deepcopy
 from typing import Any
 from conjure import Conjure
-from logger import Logger
 from solution import EssenceSolution
 from essenceTypes import EssenceFunction, EssenceMatrix, EssenceType
 
 class EssenceModel:
-    def __init__(self, model:str="", logger:Logger|None=None, raise_exceptions:bool=True, **kwargs) -> None:
+    def __init__(self, model:str="", raise_exceptions:bool=True, **kwargs) -> None:
         self.model = model
-        self.logger = logger
         self.raise_exceptions = raise_exceptions
-        self.conjure = Conjure(logger=logger, raise_exceptions=raise_exceptions, **kwargs)
+        self.conjure = Conjure(raise_exceptions=raise_exceptions, **kwargs)
         assert self.conjure.available(), "conjure not available, please install it"
         self.params = {}
 
@@ -50,8 +48,6 @@ class EssenceModel:
         params = self.params if parameters is None else parameters
         essence_in, essence_out = self.__get_essence_representation()
         if not self.check_params(params, essence_in):
-            if self.logger is not None:
-                self.logger.Error('missing parameters')
             if self.raise_exceptions:
                 raise Exception('missing parameters')
             return EssenceSolution([], [])

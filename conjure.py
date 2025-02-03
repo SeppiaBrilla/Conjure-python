@@ -1,6 +1,5 @@
 import subprocess
 from cache import Cache
-from logger import Logger
 from os.path import join
 from os import listdir
 import json
@@ -10,12 +9,9 @@ INSTANCE = 'EssenceInstance.json'
 SOLUTION_DIR = "ConjureSolution"
 
 class Conjure:
-    def __init__(self, logger:Logger|None=None, raise_exceptions:bool=True, **kwargs):
-        self.logger = logger
+    def __init__(self, raise_exceptions:bool=True, **kwargs):
         self.raise_exceptions = raise_exceptions
-        self.cache = Cache(
-            cache_dir= kwargs['cache_dir'] if 'cache_dir' in kwargs else None,
-            logger=logger)
+        self.cache = Cache(cache_dir= kwargs['cache_dir'] if 'cache_dir' in kwargs else None)
 
     def solve(self, model:str, parameter:str|None=None, *args) -> list[dict]:
         self.cache.empty()
@@ -42,13 +38,8 @@ class Conjure:
         for arg in args:
             cmd.append(str(arg))
 
-        if self.logger is not None:
-            self.logger.Info(f'running solve command with the following params: {" ".join(cmd)}')
-
         output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if output.returncode != 0:
-            if self.logger is not None:
-                self.logger.Error(f'Solve return code: {output.returncode}. Msg: {output.stderr.decode("utf-8")}')
             if self.raise_exceptions:
                 raise Exception(output.stderr.decode('utf-8'))
         return self.__load_solution()
@@ -62,13 +53,8 @@ class Conjure:
                '--dump-declarations',
                model_file]
 
-        if self.logger is not None:
-            self.logger.Info(f'running the dump-declarations command with the following params: {" ".join(cmd)}')
-
         output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if output.returncode != 0:
-            if self.logger is not None:
-                self.logger.Error(f'dump-declarations return code: {output.returncode}. Msg: {output.stderr.decode("utf-8")}')
             if self.raise_exceptions:
                 raise Exception(output.stderr.decode('utf-8'))
         return json.loads(output.stdout.decode('utf-8'))
@@ -80,8 +66,6 @@ class Conjure:
                 solutions = json.load(f)
                 f.close()
                 return solutions
-        if not self.logger is None:
-            self.logger.Error("Solution not found")
         if not self.raise_exceptions:
             return []
         raise Exception("Solution not found")
@@ -101,15 +85,9 @@ class Conjure:
         try:
             shell_out = subprocess.run(["conjure", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return_code = shell_out.returncode
-            if self.logger is not None and return_code != 0:
-                self.logger.Warn(f'conjure --version call returned the message: {shell_out.stderr.decode("utf-8")}')
             return return_code == 0
-        
-        except OSError as e:
-            if self.logger is not None:
-                self.logger.Error('cannot find the conjure exectuable.', e)
+        except:
             return False
-
 
 if __name__ == "__main__":
     model = '''
@@ -132,9 +110,7 @@ such that forAll i : int(2..b) . CA[..,i-1] <=lex CA[..,i]
 '''
     instance = json.dumps({'t' : 3, 'g' : 2, 'k' : 5, 'b' : 8})
 
-    from logger import Printlogger, Verbosity
-    logger = Printlogger(Verbosity.Debug)
-    conjure = Conjure(logger)
+    conjure = Conjure()
     print(f'conjure available: {conjure.available()}')
     print(conjure.solve(model, instance))
     print(conjure.pretty_print(model,'astjson'))
