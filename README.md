@@ -60,6 +60,7 @@ The logger helps you logging all that is happening within the library. You can i
 ```py
 from logger import Printlogger, Verbosity
 logger = Printlogger(verbosity_level=Verbosity.Debug)
+model = EssenceModel(logger=logger)
 ```
 
 ### Conjure 
