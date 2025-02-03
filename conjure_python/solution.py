@@ -1,5 +1,5 @@
 from typing import Any, Literal
-from essenceTypes import EssenceType
+from .essenceTypes import EssenceType
 
 SAT = "SAT"
 UNSAT = "UNSAT"

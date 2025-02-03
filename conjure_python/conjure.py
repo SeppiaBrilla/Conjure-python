@@ -1,5 +1,5 @@
 import subprocess
-from cache import Cache
+from .conjure_cache import Cache
 from os.path import join
 from os import listdir
 import json
@@ -89,6 +89,9 @@ class Conjure:
             return return_code == 0
         except:
             return False
+
+def is_conjure_available() -> bool:
+    return Conjure.available()
 
 if __name__ == "__main__":
     model = '''

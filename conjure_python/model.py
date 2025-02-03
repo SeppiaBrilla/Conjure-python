@@ -1,9 +1,9 @@
 import json
 from copy import deepcopy
 from typing import Any
-from conjure import Conjure
-from solution import EssenceSolution
-from essenceTypes import EssenceFunction, EssenceMatrix, EssenceType
+from .conjure import Conjure
+from .solution import EssenceSolution
+from .essenceTypes import EssenceFunction, EssenceMatrix, EssenceType
 
 class EssenceModel:
     def __init__(self, model:str="", raise_exceptions:bool=True, **kwargs) -> None:
