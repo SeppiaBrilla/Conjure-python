@@ -9,7 +9,7 @@ First, let's import the necessary dependencies. The only mandatory one is the ``
 To solve an instance you have to declare a model via the ```EssenceModel``` class. You can either add the model directly while declaring the class or afterwards in your code.
 
 ```py 
-from model import EssenceModel
+from conjure_python import EssenceModel
 
 model = EssenceModel()
 
@@ -54,19 +54,9 @@ There are (currently) four native python types supported: int, bool, function an
 For the function implementation, you can simply call the function with your parameter and get the corresponding output. You can also check the function domain and codomain via their respective variables.
 For the matrix implementation you can simply access its content via indexing. You can also check the matrix index types via the ```index_types``` variable and the matrix shape via the ```shape``` variable. 
 
-### Logger
-The logger helps you logging all that is happening within the library. You can implement one yourself by implementing the ```Logger``` class or you can use the default print logger. You can pass the logger to the ```EssenceModel``` constructor.
-
+### check for conjure 
+if you want to check if conjure is available on your system by using the ```is_conjure_available()``` function which returns a boolean value.
 ```py
-from logger import Printlogger, Verbosity
-logger = Printlogger(verbosity_level=Verbosity.Debug)
-model = EssenceModel(logger=logger)
-```
-
-### Conjure 
-The ```Conjure``` class is the class that interacts with your conjure instance. You can avoid importing it but you may also want to use the ```available()``` method to check if conjure is installed 
-
-```py
-conjure = Conjure()
-print("Is conjure available?", conjure.available())
+from conjure_python import is_conjure_available
+print("Is conjure available?", is_conjure_available())
 ```
