@@ -15,23 +15,7 @@ model = EssenceModel()
 
 #add your model
 model_str = """
-language Essence 1.3
-    given t : int(1..) $ strength (size of subset of rows)
-    given k : int(1..) $ rows
-    given g : int(2..) $ number of values
-    given b : int(1..) $ columns
-    where k>=t, b>=g**t
-    find CA: matrix indexed by [int(1..k), int(1..b)] of int(1..g)
-    such that
-        forAll rows : sequence (size t) of int(1..k) .
-            (forAll i : int(2..t) . rows(i-1) < rows(i)) ->
-            forAll values : sequence (size t) of int(1..g) .
-                exists column : int(1..b) .
-                    forAll i : int(1..t) .
-                        CA[rows(i), column] = values(i)
-
-    such that forAll i : int(2..k) . CA[i-1,..] <=lex CA[i,..]
-    such that forAll i : int(2..b) . CA[..,i-1] <=lex CA[..,i]
+...
 """
 model.append(model_str)
 ```
@@ -41,7 +25,7 @@ To add your parameters you can either add them one by one via the ```add_paramet
 Once you call the solve method it will return an instance of the ```EssenceSolution``` class which will contain a ```state``` variable indicating if conjure was able to find a solution and a list of solutions found by the solver. The solutions can be indexed using an integer index and they can be accessed as raw solutions (by setting the ```mode``` variable to "raw") or a python-native solution (by setting the ```mode``` variable to "python"). In the second case, all variables will have the correct type and you will be able to use them as native python objects.
 
 ```py
-solutions = model.solve({'t' : 3, 'g' : 2, 'k' : 4, 'b' : 8})
+solutions = model.solve({})
 if solutions.state == "SAT":
     for sol in solutions:
         print(sol)
