@@ -9,8 +9,7 @@ INSTANCE = 'EssenceInstance.json'
 SOLUTION_DIR = "ConjureSolution"
 
 class Conjure:
-    def __init__(self, raise_exceptions:bool=True, **kwargs):
-        self.raise_exceptions = raise_exceptions
+    def __init__(self, **kwargs):
         self.cache = Cache(cache_dir= kwargs['cache_dir'] if 'cache_dir' in kwargs else None)
 
     def solve(self, model:str, parameter:str|None=None, *args) -> list[dict]:
@@ -38,10 +37,9 @@ class Conjure:
         for arg in args:
             cmd.append(str(arg))
 
-        output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = subprocess.run(" ".join(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         if output.returncode != 0:
-            if self.raise_exceptions:
-                raise Exception(output.stderr.decode('utf-8'))
+            raise Exception(output.stderr.decode('utf-8'))
         return self.__load_solution()
 
     def get_model_parameters(self, model:str) -> list[dict]:
@@ -55,8 +53,7 @@ class Conjure:
 
         output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if output.returncode != 0:
-            if self.raise_exceptions:
-                raise Exception(output.stderr.decode('utf-8'))
+            raise Exception(output.stderr.decode('utf-8'))
         return json.loads(output.stdout.decode('utf-8'))
 
     def __load_solution(self) -> list[dict]:
@@ -66,8 +63,6 @@ class Conjure:
                 solutions = json.load(f)
                 f.close()
                 return solutions
-        if not self.raise_exceptions:
-            return []
         raise Exception("Solution not found")
 
     def pretty_print(self, code: str, output_type: str) -> str:
