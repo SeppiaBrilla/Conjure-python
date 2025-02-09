@@ -92,6 +92,40 @@ class EssenceFunction(EssenceType):
     def __str__(self) -> str:
         return "\n".join([f'{k} -> {v}' for k,v in self.values.items()])
 
+class EssenceRelation(EssenceType):
+    def __init__(self, values: list[list], essece_types: str) -> None:
+        super().__init__({}, essece_types)
+        types = self.__parse_type(essece_types)
+        self.values = tuple([tuple([types[i](v[i]) for i in range(len(v))]) for v in values])
+        self.relations_len = len(self.values[0])
+        self.relation_type = type(types)
+
+    def __parse_type(self, essence_type:str) -> list:
+        relation_types = essence_type.split("of")[1]
+        first_index = relation_types.index("(") + 1
+        last_index = [i for i in range(len(relation_types)) if relation_types[i] == ")"][-1]
+        inner_types = relation_types[first_index:last_index].split("*")
+        inner_types = [cast(t.replace(" ","").split("(")[0]) for t in inner_types]
+        return inner_types
+
+    def __len__(self):
+        return len(self.values)
+
+    def __getitem__(self, arg:int|tuple):
+        if type(arg) == int:
+            return self.values[arg]
+        assert isinstance(arg,tuple), f"expected int or tuple, got: {type(arg)}"
+        ret_val = self.values[arg[0]]
+        for idx in arg[:1]:
+            ret_val = ret_val[idx]
+        return ret_val
+
+    def __hash__(self) -> int:
+        return hash(self.values)
+
+    def __str__(self) -> str:
+        return "\n".join([str(v) for v in self.values])
+
 if __name__ == "__main__":   
     EssenceMatrix({'1': {'1': 1, '2': 1, '3': 1, '4': 1, '5': 2, '6': 2, '7': 2, '8': 2}, '2': {'1': 1, '2': 1, '3': 2, '4': 2, '5': 1, '6': 1, '7': 2, '8': 2}, '3': {'1': 1, '2': 2, '3': 1, '4': 2, '5': 1, '6': 2, '7': 1, '8': 2}, '4': {'1': 1, '2': 2, '3': 2, '4': 1, '5': 2, '6': 1, '7': 1, '8': 2}}, "matrix indexed by [int(1..k), int(1..b)] of int(1..g)")
 
@@ -104,3 +138,7 @@ if __name__ == "__main__":
       "74": 9, "75": 8, "76": 15, "77": 7, "78": 11, "79": 1, "8": 10, "80": 17, "81": 8, "82": 17, "83": 14, "84": 11,
       "85": 7, "86": 16, "87": 7, "88": 11, "89": 14, "9": 8, "90": 17, "91": 11, "92": 14, "93": 17, "94": 11,
       "95": 14, "96": 17, "97": 11, "98": 14, "99": 17}, "function (total) int(1..n_cars) --> int(1..n_cars)")
+
+    EssenceRelation([[1, 1], [1, 2], [1, 5], [2, 1], [2, 2], [2, 4], [3, 1], [3, 2], [3, 3], [4, 2], [4, 3], [4, 4], [5, 1], [5, 2],
+             [6, 1], [6, 5], [7, 1], [7, 4], [8, 1], [8, 3], [9, 2], [9, 5], [10, 2], [10, 4], [11, 2], [11, 3], [12, 3],
+             [12, 5], [13, 3], [13, 4], [14, 1], [15, 2], [16, 5], [17, 4], [18, 3]], "relation (minSize 1) of ( int(1..n_classes) * int(1..n_options) )")

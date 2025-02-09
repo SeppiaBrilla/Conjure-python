@@ -74,3 +74,11 @@ instance = {
 }
 
 print(model.solve(instance))
+
+model = EssenceModel()
+model.append("""language Essence 1.3
+
+find r : relation (minSize 4) of (int(1..3) * int(1..3))
+
+""")
+print(model.solve())

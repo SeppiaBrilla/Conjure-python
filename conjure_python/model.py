@@ -3,7 +3,7 @@ from copy import deepcopy
 from typing import Any
 from .conjure import Conjure
 from .solution import EssenceSolution
-from .essenceTypes import EssenceFunction, EssenceMatrix, EssenceType
+from .essenceTypes import EssenceFunction, EssenceMatrix, EssenceRelation, EssenceType
 
 class EssenceModel:
     def __init__(self, model:str="", solver:str|None=None, **kwargs) -> None:
@@ -133,7 +133,7 @@ class EssenceModel:
                         out_param['to_replace'] = False
                     else:
                         out_param['to_replace'] = True
-                out_param_dict[out_param['name']] = out_param
+            out_param_dict[out_param['name']] = out_param
         solutions = []
         for sol in solution:
             new_sol = {}
@@ -143,6 +143,8 @@ class EssenceModel:
                     new_sol[name] = EssenceMatrix(sol[name], dom)
                 elif 'function' in dom:
                     new_sol[name] = EssenceFunction(sol[name], dom)
+                elif 'relation' in dom:
+                    new_sol[name] = EssenceRelation(sol[name], dom)
                 elif 'int' in dom:
                     new_sol[name] = int(sol[name])
                 elif 'bool' in dom:
