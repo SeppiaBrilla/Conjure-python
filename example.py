@@ -14,7 +14,6 @@ model = EssenceModel(model="""language Essence 1.3
                 exists column : int(1..b) .
                     forAll i : int(1..t) .
                         CA[rows(i), column] = values(i)
-
     such that forAll i : int(2..k) . CA[i-1,..] <=lex CA[i,..]
     such that forAll i : int(2..b) . CA[..,i-1] <=lex CA[..,i]
     """)
@@ -26,37 +25,20 @@ print(model.solve({'t' : 3, 'g' : 2, 'k' : 4, 'b' : 8}))
 
 model.clear()
 model.append("""language Essence 1.3
-$ prob001.essence: Car Sequencing
-$ Problem details available at http://www.csplib.org/Problems/prob001/
-
 given n_cars, n_classes, n_options : int(1..)
-
 letting Slots  be domain int(1..n_cars),
         Class  be domain int(1..n_classes),
         Option be domain int(1..n_options),
-
 given quantity      : function (total) Class  --> int(1..),
       maxcars       : function (total) Option --> int(1..),
       blksize_delta : function (total) Option --> int(1..),
       usage         : relation (minSize 1) of ( Class * Option )
-
-$ There must be at least as many cars as there are n_classes as quantity is indexed from 1..
 where n_cars >= n_classes
-
-$ The sum of the cars in the quantity function should equal n_cars 
 where ( sum quant : Class . quantity(quant) ) = n_cars
-
-$ Blksize must be greater than maxcars for all options
 $ where forAll option: Option . maxcars(option) < blksize(option)
-
-$ Make sure that all options are used at least once
 where  forAll option: Option .  |toSet(usage(_,option))| >= 1
-
-$ Make sure that all classes have at least one option
 where  forAll class: Class .  |toSet(usage(class,_))| >= 1
-
 find car : function (total) Slots --> Class
-
 such that
     forAll c : Class . |preImage(car,c)| = quantity(c),
     forAll opt : Option .
@@ -71,14 +53,16 @@ instance = {
              [6, 1], [6, 5], [7, 1], [7, 4], [8, 1], [8, 3], [9, 2], [9, 5], [10, 2], [10, 4], [11, 2], [11, 3], [12, 3],
              [12, 5], [13, 3], [13, 4], [14, 1], [15, 2], [16, 5], [17, 4], [18, 3]]
 }
-
 print(model.solve(instance))
 
-model.clear_model()
-
+model.clear()
 model.append("""language Essence 1.3
-
 find r : relation (minSize 4) of (int(1..3) * int(1..3))
-
 """)
 print(model.solve())
+
+model.clear()
+model.append("""language Essence 1.3
+find t : tuple(int(1..5), int(9..15), int(1..5))
+""")
+print(model.solve()[0,"t"])

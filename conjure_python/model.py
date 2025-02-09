@@ -3,7 +3,7 @@ from copy import deepcopy
 from typing import Any
 from .conjure import Conjure
 from .solution import EssenceSolution
-from .essenceTypes import EssenceFunction, EssenceMatrix, EssenceRelation, EssenceType
+from .essenceTypes import EssenceFunction, EssenceMatrix, EssenceRelation, EssenceType, essence_tuple
 
 class EssenceModel:
     def __init__(self, model:str="", solver:str|None=None, **kwargs) -> None:
@@ -145,9 +145,11 @@ class EssenceModel:
                     new_sol[name] = EssenceFunction(sol[name], dom)
                 elif 'relation' in dom:
                     new_sol[name] = EssenceRelation(sol[name], dom)
-                elif 'int' in dom:
+                elif '(' == dom[0] and ')' == dom[-1]:
+                    new_sol[name] = essence_tuple(sol[name], dom)
+                elif 'int' == dom.split('(')[0]:
                     new_sol[name] = int(sol[name])
-                elif 'bool' in dom:
+                elif 'bool' == dom:
                     new_sol[name] = bool(sol[name])
                 else:
                     new_sol[name] = sol[name]
