@@ -31,6 +31,9 @@ class EssenceMatrix(EssenceType):
             val = val[i]
         return val
 
+    def __len__(self) -> int:
+        return self.shape[0]
+
     def __parse_types(self, essence_types:str):
         assert "matrix" in essence_types, 'wrong essence type. Expected matrix'
         matrix_type = cast(essence_types.split(" of ")[1].split('(')[0].replace(" ", ""))
@@ -86,6 +89,9 @@ class EssenceFunction(EssenceType):
     def __call__(self, arg):
         return self.values[arg]
 
+    def __len__(self) -> int:
+        return len(self.domain_values)
+
     def __hash__(self) -> int:
         return hash(tuple(list(self.values.items())))
 
@@ -98,7 +104,7 @@ class EssenceRelation(EssenceType):
         types = self.__parse_type(essece_types)
         self.values = tuple([tuple([types[i](v[i]) for i in range(len(v))]) for v in values])
         self.relations_len = len(self.values[0])
-        self.relation_type = type(types)
+        self.relation_type = tuple(types)
 
     def __parse_type(self, essence_type:str) -> list:
         relation_types = essence_type.split("of")[1]
@@ -108,7 +114,7 @@ class EssenceRelation(EssenceType):
         inner_types = [cast(t.replace(" ","").split("(")[0]) for t in inner_types]
         return inner_types
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.values)
 
     def __getitem__(self, arg:int|tuple):
