@@ -73,7 +73,7 @@ class EssenceModel:
             raw_solution = self.__conjure.solve(self.__model, json.dumps(params), *solver_args)
             python_essence_solution = self.__build_essence_solution(raw_solution, (essence_in, essence_out))
             return EssenceSolution(raw_solution, python_essence_solution)
-        raw_solution = self.__conjure.solve(self.__model, parameter=None, *solver_args)
+        raw_solution = self.__conjure.solve(self.__model, None, *solver_args)
         python_essence_solution = self.__build_essence_solution(raw_solution, (essence_in, essence_out))
         return EssenceSolution(raw_solution, python_essence_solution)
 

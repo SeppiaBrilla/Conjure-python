@@ -1,5 +1,4 @@
 from conjure_python import EssenceModel
-import json
 
 model = EssenceModel(model="""language Essence 1.3
     given t : int(1..) $ strength (size of subset of rows)
@@ -75,7 +74,8 @@ instance = {
 
 print(model.solve(instance))
 
-model = EssenceModel()
+model.clear_model()
+
 model.append("""language Essence 1.3
 
 find r : relation (minSize 4) of (int(1..3) * int(1..3))
