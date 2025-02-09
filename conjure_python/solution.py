@@ -11,7 +11,7 @@ class EssenceSolution:
         self.state = SAT if len(raw_solutions) > 0 else UNSAT
         self.mode = mode
 
-    def __call__(self, idx:tuple[int,str]|int) -> dict|EssenceType|Any:
+    def __getitem__(self, idx:tuple[int,str]|int) -> dict|EssenceType|Any:
         if type(idx) == int:
             return self.raw[idx] if self.mode == "raw" else self.python_solution[idx]
         assert isinstance(idx, tuple), f'expected tuple or int, got {type(idx)}'
