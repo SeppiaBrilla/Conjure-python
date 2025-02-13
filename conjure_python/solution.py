@@ -9,21 +9,25 @@ class EssenceSolution:
         self.raw = raw_solutions
         self.python_solution = python_solution
         self.state = SAT if len(raw_solutions) > 0 else UNSAT
-        self.mode = mode
+        self.__mode = mode
 
     def __getitem__(self, idx:tuple[int,str]|int) -> dict|EssenceType|Any:
         if type(idx) == int:
-            return self.raw[idx] if self.mode == "raw" else self.python_solution[idx]
+            return self.raw[idx] if self.__mode == "raw" else self.python_solution[idx]
         assert isinstance(idx, tuple), f'expected tuple or int, got {type(idx)}'
-        return self.raw[idx[0]][idx[1]] if self.mode == "raw" else self.python_solution[idx[0]][idx[1]]
+        return self.raw[idx[0]][idx[1]] if self.__mode == "raw" else self.python_solution[idx[0]][idx[1]]
 
-    def update_mode(self, new_mode:Literal["raw", "python"]) -> None:
-        self.mode = new_mode
+    def set_mode(self, new_mode:Literal["raw", "python"]) -> None:
+        assert new_mode in ["raw", "python"], f"supported modes are 'raw' and 'python'. Got {new_mode}"
+        self.__mode = new_mode
+
+    def get_mode(self) -> str:
+        return self.__mode
 
     def __str__(self) -> str:
         if self.state == UNSAT:
             return UNSAT
-        chosen_version = self.python_solution if self.mode == "python" else self.raw
+        chosen_version = self.python_solution if self.__mode == "python" else self.raw
         solution_strs = []
         for i, solution in enumerate(chosen_version):
             sol_str = '\n'.join([f'{k} : {v}' for k,v in solution.items()])
