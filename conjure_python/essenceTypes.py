@@ -1,3 +1,5 @@
+from re import sub
+
 def cast(str_type:str):
     if str_type == 'int':
         return int
@@ -8,6 +10,30 @@ def cast(str_type:str):
     if str_type == 'list': 
         return list
     return str
+
+def is_int(domain:str) -> bool:
+    return domain == 'int' or\
+        domain.split('(')[0] == 'int'
+
+def is_bool(domain:str) -> bool:
+    return domain == 'bool'
+
+def is_matrix(domain:str) -> bool:
+    is_there_matrix = domain.split('[')[0].replace(' ','') == "matrixindexedby"
+    if not is_there_matrix:
+        return False
+    return "of" in domain.split(']')[1]
+
+def is_function(domain:str) -> bool:
+    is_there_function = "function" == domain.split('(')[0].replace(" ",'')
+    if not is_there_function:
+        return False
+    return '-->' in domain.split('(')[1]
+
+def is_relation(domain:str) -> bool:
+    regex = r'(\([a-zA-Z0-9 ]*\))'
+    dom = sub(regex, '', domain)
+    return dom.split('(')[0].replace(' ', '') == "relationof"
 
 class EssenceType:
     def __init__(self, values:dict, essece_types:str) -> None:
