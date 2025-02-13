@@ -18,9 +18,6 @@ model = EssenceModel(model="""language Essence 1.3
     such that forAll i : int(2..b) . CA[..,i-1] <=lex CA[..,i]
     """)
 
-model.set_solver("chuffed")
-model.set_random_seed(0)
-model.set_time_limit(1000)
 print(model.solve({'t' : 3, 'g' : 2, 'k' : 4, 'b' : 8}))
 
 model.clear()
@@ -66,3 +63,10 @@ model.append("""language Essence 1.3
 find t : tuple(int(1..5), int(9..15), int(1..5))
 """)
 print(model.solve()[0,"t"])
+
+model.clear()
+model.append("""language Essence 1.3
+
+find t: record{A : int(0..1), B : int(0..2)}
+""")
+print(model.solve()[0, "t"])

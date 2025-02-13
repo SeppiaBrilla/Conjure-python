@@ -35,6 +35,12 @@ def is_relation(domain:str) -> bool:
     dom = sub(regex, '', domain)
     return dom.split('(')[0].replace(' ', '') == "relationof"
 
+def is_record(domain:str) -> bool:
+    return "record" in domain and "{" in domain and "}" in domain
+
+def is_tuple(domain:str) -> bool:
+    return domain[0] == "(" and domain[-1] == ")"
+
 class EssenceType:
     def __init__(self, values:dict, essece_types:str) -> None:
         pass
@@ -172,6 +178,49 @@ def essence_tuple(tuple_values:list, essence_types:str) -> tuple:
     types = [cast(t.split('(')[0]) for t in types]
     return tuple([types[i](t) for i,t in enumerate(tuple_values)])
 
+class EssenceRecord(EssenceType):
+    def __init__(self, values: dict, essece_types: str) -> None:
+        record_keys = list(values.keys())
+        self.record_types = self.__get_types(essece_types, record_keys)
+        self.__values = {k: self.record_types[k](v) for k,v in values.items()}
+
+    def __get_types(self, essence_types:str, essence_keys:list[str]) -> dict:
+        essence_types = essence_types.split('{')[1].replace('}','')
+        types = {}
+        for element in essence_types.split(','):
+            element_split = element.split(':')
+            key, element_type = element_split[0].replace(' ',''), element_split[1].replace(' ','')
+            assert key in essence_keys, f"cannot find key {key}. available keys are: {essence_keys}"
+            if is_int(element_type):
+                types[key] = int
+            elif is_bool(element_type):
+                types[key] = bool
+            else:
+                types[key] = str
+        return types
+
+    def keys(self):
+        return self.__values.keys()
+
+    def items(self):
+        return self.__values.items()
+
+    def values(self):
+        return self.__values.values()
+
+    def __len__(self) -> int:
+        return len(self.__values)
+
+    def __getitem__(self, arg:str):
+        return self.__values[arg]
+
+    def __hash__(self) -> int:
+        return hash(tuple([itm for itm in self.__values.items()]))
+
+    def __str__(self) -> str:
+        return "\n".join([f'{k}: {v}' for k, v in self.__values.items()])
+
+
 if __name__ == "__main__":   
     EssenceMatrix({'1': {'1': 1, '2': 1, '3': 1, '4': 1, '5': 2, '6': 2, '7': 2, '8': 2}, '2': {'1': 1, '2': 1, '3': 2, '4': 2, '5': 1, '6': 1, '7': 2, '8': 2}, '3': {'1': 1, '2': 2, '3': 1, '4': 2, '5': 1, '6': 2, '7': 1, '8': 2}, '4': {'1': 1, '2': 2, '3': 2, '4': 1, '5': 2, '6': 1, '7': 1, '8': 2}}, "matrix indexed by [int(1..k), int(1..b)] of int(1..g)")
 
@@ -188,3 +237,5 @@ if __name__ == "__main__":
     EssenceRelation([[1, 1], [1, 2], [1, 5], [2, 1], [2, 2], [2, 4], [3, 1], [3, 2], [3, 3], [4, 2], [4, 3], [4, 4], [5, 1], [5, 2],
              [6, 1], [6, 5], [7, 1], [7, 4], [8, 1], [8, 3], [9, 2], [9, 5], [10, 2], [10, 4], [11, 2], [11, 3], [12, 3],
              [12, 5], [13, 3], [13, 4], [14, 1], [15, 2], [16, 5], [17, 4], [18, 3]], "relation (minSize 1) of ( int(1..n_classes) * int(1..n_options) )")
+
+    print(EssenceRecord({"A": 0, "B": 0},'record {A : int(0..1), B : int(0..2)}'))
