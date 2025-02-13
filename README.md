@@ -33,12 +33,22 @@ else:
     print("solution not found")
 ```
 
-### The python-native types
-There are (currently) four native python types supported: int, bool, function and matrix. The int and bool implementations are pretty straight forward. For the matrix and function implementations it was necessary to create a custom type which derives from ```EssenceType```. 
-For the function implementation, you can simply call the function with your parameter and get the corresponding output. You can also check the function domain and codomain via their respective variables.
-For the matrix implementation you can simply access its content via indexing. You can also check the matrix index types via the ```index_types``` variable and the matrix shape via the ```shape``` variable. 
+## The python-native types
+Currently the following native python types are supported: int, bool, function, matrix, record, tuples and relation. 
+For the int, bool and tuple types are simple python types.
+All the other types derive from the base class ```EssenceType``` which implements the ```___hash___```, ```___len___``` and ```___str___``` methods.
+### The matrix type
+The matrix type has a tuple called ```shape``` which contains an integer value that represents the number of elements for each dimension of the matrix.
+Another tuple, ```index_types``` contains the type of each index (in order) of the matrix.
+Finally, the matrix can be directly indexed with a single value or a tuple of value to get the elements of the matrix.
+### The function type
+The function type can be directly called to access its values. It also has a dictionary ```types``` with two keys: ```"codomain"``` and ```"domain"``` containing, respectively the codomain type and domain type of the function. The property ```domain_values``` is a set with all the values of the domain while the property ```codomain_values``` is a set with all the values of the codomain.
+### The relation type
+The relation type can also be indexed via an integer value to get the corresponding element. The relation values are simple tuples. The type of each element of the tuple can be accessed via the property ```relation_type``` of the relation type. The property ```relations_len``` represents the number of elements in each tuple.
+## The record type
+The record type is a simple dictionary and can be used as such. It implements the ```keys()```, ```items()``` and ```values()``` methods. It can also has a property ```record_types``` which is a dictionary containing the type of each key of the record.
 
-### check for conjure 
+## check for conjure 
 if you want to check if conjure is available on your system by using the ```is_conjure_available()``` function which returns a boolean value.
 ```py
 from conjure_python import is_conjure_available
