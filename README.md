@@ -36,7 +36,7 @@ else:
 ## The python-native types
 Currently the following native python types are supported: int, bool, function, matrix, record, tuples and relation. 
 For the int, bool and tuple types are simple python types.
-All the other types derive from the base class ```EssenceType``` which implements the ```__hash__```, ```__len__```, ```__str__```, ```__iter__`` and ```__next__``` methods.
+All the other types derive from the base class ```EssenceType``` which implements the ```__hash__```, ```__len__```, ```__str__```, ```__iter__``` and ```__next__``` methods.
 ### The matrix type (EssenceMatrix)
 The matrix type has a tuple called ```shape``` which contains an integer value that represents the number of elements for each dimension of the matrix.
 Another tuple, ```index_types``` contains the type of each index (in order) of the matrix.
