@@ -37,15 +37,15 @@ else:
 Currently the following native python types are supported: int, bool, function, matrix, record, tuples and relation. 
 For the int, bool and tuple types are simple python types.
 All the other types derive from the base class ```EssenceType``` which implements the ```___hash___```, ```___len___``` and ```___str___``` methods.
-### The matrix type
+### The matrix type (EssenceMatrix)
 The matrix type has a tuple called ```shape``` which contains an integer value that represents the number of elements for each dimension of the matrix.
 Another tuple, ```index_types``` contains the type of each index (in order) of the matrix.
 Finally, the matrix can be directly indexed with a single value or a tuple of value to get the elements of the matrix.
-### The function type
+### The function type (EssenceFunction)
 The function type can be directly called to access its values. It also has a dictionary ```types``` with two keys: ```"codomain"``` and ```"domain"``` containing, respectively the codomain type and domain type of the function. The property ```domain_values``` is a set with all the values of the domain while the property ```codomain_values``` is a set with all the values of the codomain.
-### The relation type
+### The relation type (EssenceRelation)
 The relation type can also be indexed via an integer value to get the corresponding element. The relation values are simple tuples. The type of each element of the tuple can be accessed via the property ```relation_type``` of the relation type. The property ```relations_len``` represents the number of elements in each tuple.
-## The record type
+## The record type (EssenceRecord)
 The record type is a simple dictionary and can be used as such. It implements the ```keys()```, ```items()``` and ```values()``` methods. It can also has a property ```record_types``` which is a dictionary containing the type of each key of the record.
 
 ## check for conjure 
