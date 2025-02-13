@@ -54,6 +54,12 @@ class EssenceType:
     def __str__(self) -> str:
         raise NotImplementedError("method __len__ not implemented. It must be implemented by the children class")
 
+    def __iter__(self):
+        raise NotImplementedError("method __iter__ not implemented. It must be implemented by the children class")
+
+    def __next__(self):
+        raise NotImplementedError("method __next__ not implemented. It must be implemented by the children class")
+
 class EssenceMatrix(EssenceType):
     def __init__(self, values:dict, essece_types:str) -> None:
         super().__init__(values, essece_types)
@@ -62,6 +68,7 @@ class EssenceMatrix(EssenceType):
         self.shape = tuple([s[1] for s in shape])
         self.index_types = tuple([s[0] for s in shape])
         self.matrix = self.__create_matrix(values, list(self.index_types), matrix_types)
+        self.__current_idx = 0
 
     def __getitem__(self, idx:int|tuple):
         if not isinstance(idx, tuple):
@@ -105,6 +112,15 @@ class EssenceMatrix(EssenceType):
             return [self.__create_matrix(v, types[1:], value_type) for v in dict_values]
         return {cast(k): self.__create_matrix(v, types[1:], value_type) for k,v in values.items()}
 
+    def __iter__(self):
+        self.__current_idx = 0
+        return self
+
+    def __next__(self):
+        el = self.matrix[self.__current_idx]
+        self.__current_idx += 1
+        return el
+
     def __hash__(self) -> int:
         return hash(tuple([tuple(row) for row in self.matrix]))
     
@@ -119,6 +135,8 @@ class EssenceFunction(EssenceType):
         self.values = {codomain(k): domain(v) for k,v in values.items()}
         self.domain_values = set(self.values.keys())
         self.codomain_values = set(self.values.values())
+        self.__current_idx = 0
+        self.__items = list(self.values.items())
 
     def __parse_types(self, essence_types:str):
         assert "function" in essence_types, 'wrong essence type. Expected function'
@@ -129,6 +147,15 @@ class EssenceFunction(EssenceType):
 
     def __call__(self, arg):
         return self.values[arg]
+
+    def __iter__(self):
+        self.__current_idx = 0
+        return self
+
+    def __next__(self):
+        el = self.__items[self.__current_idx]
+        self.__current_idx += 1
+        return el
 
     def __len__(self) -> int:
         return len(self.domain_values)
@@ -146,6 +173,7 @@ class EssenceRelation(EssenceType):
         self.values = tuple([tuple([types[i](v[i]) for i in range(len(v))]) for v in values])
         self.relations_len = len(self.values[0])
         self.relation_type = tuple(types)
+        self.__current_idx = 0
 
     def __parse_type(self, essence_type:str) -> list:
         relation_types = essence_type.split("of")[1]
@@ -167,6 +195,15 @@ class EssenceRelation(EssenceType):
             ret_val = ret_val[idx]
         return ret_val
 
+    def __iter__(self):
+        self.__current_idx = 0
+        return self
+
+    def __next__(self):
+        el = self.values[self.__current_idx]
+        self.__current_idx += 1
+        return el
+
     def __hash__(self) -> int:
         return hash(self.values)
 
@@ -183,6 +220,8 @@ class EssenceRecord(EssenceType):
         record_keys = list(values.keys())
         self.record_types = self.__get_types(essece_types, record_keys)
         self.__values = {k: self.record_types[k](v) for k,v in values.items()}
+        self.__keys = list(self.__values.keys())
+        self.__current_key_idx = 0
 
     def __get_types(self, essence_types:str, essence_keys:list[str]) -> dict:
         essence_types = essence_types.split('{')[1].replace('}','')
@@ -213,6 +252,15 @@ class EssenceRecord(EssenceType):
 
     def __getitem__(self, arg:str):
         return self.__values[arg]
+
+    def __iter__(self):
+        self.__current_key_idx = 0
+        return self
+
+    def __next__(self):
+        el = self.__values[self.__keys[self.__current_key_idx]]
+        self.__current_key_idx += 1
+        return el
 
     def __hash__(self) -> int:
         return hash(tuple([itm for itm in self.__values.items()]))
