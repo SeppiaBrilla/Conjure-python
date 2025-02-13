@@ -139,7 +139,6 @@ class EssenceModel:
             new_sol = {}
             for name in sol.keys():
                 dom = out_param_dict[name]['domain']
-                print(dom, name)
                 if is_matrix(dom):
                     new_sol[name] = EssenceMatrix(sol[name], dom)
                 elif is_function(dom):
