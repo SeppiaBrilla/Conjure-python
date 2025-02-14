@@ -117,6 +117,8 @@ class EssenceMatrix(EssenceType):
         return self
 
     def __next__(self):
+        if self.__current_idx >= len(self):
+            raise StopIteration
         el = self.matrix[self.__current_idx]
         self.__current_idx += 1
         return el
@@ -153,6 +155,8 @@ class EssenceFunction(EssenceType):
         return self
 
     def __next__(self):
+        if self.__current_idx >= len(self):
+            raise StopIteration
         el = self.__items[self.__current_idx]
         self.__current_idx += 1
         return el
@@ -200,6 +204,8 @@ class EssenceRelation(EssenceType):
         return self
 
     def __next__(self):
+        if self.__current_idx >= len(self):
+            raise StopIteration
         el = self.values[self.__current_idx]
         self.__current_idx += 1
         return el
@@ -258,6 +264,8 @@ class EssenceRecord(EssenceType):
         return self
 
     def __next__(self):
+        if self.__current_key_idx >= len(self):
+            raise StopIteration
         el = self.__values[self.__keys[self.__current_key_idx]]
         self.__current_key_idx += 1
         return el

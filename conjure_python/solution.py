@@ -30,9 +30,15 @@ class EssenceSolution:
         return self
 
     def __next__(self):
+        if self.__current_idx >= len(self):
+            raise StopIteration
         elem = self[self.__current_idx]
         self.__current_idx += 1
         return elem
+
+    def __len__(self):
+        return len(self.python_solution)
+
     def __str__(self) -> str:
         if self.state == UNSAT:
             return UNSAT
