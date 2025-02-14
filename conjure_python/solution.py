@@ -10,6 +10,7 @@ class EssenceSolution:
         self.python_solution = python_solution
         self.state = SAT if len(raw_solutions) > 0 else UNSAT
         self.__mode = mode
+        self.__current_idx = 0
 
     def __getitem__(self, idx:tuple[int,str]|int) -> dict|EssenceType|Any:
         if type(idx) == int:
@@ -24,6 +25,14 @@ class EssenceSolution:
     def get_mode(self) -> str:
         return self.__mode
 
+    def __iter__(self):
+        self.__current_idx = 0
+        return self
+
+    def __next__(self):
+        elem = self[self.__current_idx]
+        self.__current_idx += 1
+        return elem
     def __str__(self) -> str:
         if self.state == UNSAT:
             return UNSAT
