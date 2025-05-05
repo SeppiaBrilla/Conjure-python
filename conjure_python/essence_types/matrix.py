@@ -17,7 +17,7 @@ class EssenceMatrix(EssenceType):
         val = self.matrix
         assert isinstance(idx, tuple), f'expecting tuple or ashable type, got: {type(idx)}' 
         for i in idx:
-            val = val[i]
+            val = val[i - 1]
         return val
 
     def __len__(self) -> int:
