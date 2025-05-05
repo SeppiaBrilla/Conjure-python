@@ -9,12 +9,10 @@ class EssenceType:
         raise NotImplementedError("method __hash__ not implemented. It must be implemented by the children class")
 
     def __str__(self) -> str:
-        raise NotImplementedError("method __len__ not implemented. It must be implemented by the children class")
+        raise NotImplementedError("method __str__ not implemented. It must be implemented by the children class")
 
     def __iter__(self):
         raise NotImplementedError("method __iter__ not implemented. It must be implemented by the children class")
 
     def __next__(self):
         raise NotImplementedError("method __next__ not implemented. It must be implemented by the children class")
-
-
