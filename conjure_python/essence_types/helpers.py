@@ -43,4 +43,6 @@ def is_record(domain:str) -> bool:
 def is_tuple(domain:str) -> bool:
     return domain[0] == "(" and domain[-1] == ")"
 
+def is_set(domain:str) -> bool:
+    return (domain[0] == '{' and domain[1] == '}') or ('set' in domain and 'mset' not in domain)
 
