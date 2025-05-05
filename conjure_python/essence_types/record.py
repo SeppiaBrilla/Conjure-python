@@ -55,5 +55,3 @@ class EssenceRecord(EssenceType):
 
     def __str__(self) -> str:
         return "\n".join([f'{k}: {v}' for k, v in self.__values.items()])
-
-
