@@ -1,6 +1,5 @@
 import unittest
-from conjure_python.essence_types import EssenceMatrix, EssenceFunction, EssenceRelation, EssenceRecord
-from conjure_python.essence_types.tuple import EssenceTuple
+from conjure_python.essence_types import EssenceMatrix, EssenceFunction, EssenceRelation, EssenceRecord, EssenceSequence, EssenceTuple, EssenceSet
 
 class TestEssenceObjects(unittest.TestCase):
 
@@ -193,5 +192,120 @@ class TestEssenceObjects(unittest.TestCase):
         self.assertEqual(essence_tuple.values, (False, 10, True))
         self.assertEqual(essence_tuple.types, [bool, int, bool])
 
+    def test_essence_set(self):
+        # Testing a set with integer elements
+        set_data = [9, 10, 11, 12, 13]
+        essence_set = EssenceSet(set_data, "find S: set (size 5) of int(9..16)")
+        
+        # Test basic properties
+        self.assertEqual(essence_set.domain_type, int)
+        self.assertEqual(len(essence_set), 5)
+        
+        # Test set values
+        expected_set = set(set_data)
+        self.assertEqual(essence_set.values, expected_set)
+        
+        # Test string representation
+        str_repr = str(essence_set)
+        self.assertTrue(isinstance(str_repr, str))
+        self.assertEqual(str_repr, str(expected_set))
+        
+        # Test iteration
+        elements = []
+        for element in essence_set:
+            elements.append(element)
+        self.assertEqual(sorted(elements), sorted(set_data))
+        
+        # Test hash implementation
+        self.assertTrue(isinstance(hash(essence_set), int))
+        
+        # Test with different types
+        bool_set = EssenceSet([True, False], "find S: set of bool")
+        self.assertEqual(bool_set.domain_type, bool)
+        self.assertEqual(bool_set.values, {True, False})
+        self.assertEqual(len(bool_set), 2)
+
+    def test_essence_set_edge_cases(self):
+        # Test empty set
+        empty_set = EssenceSet([], "find S: set of int(1..10)")
+        self.assertEqual(len(empty_set), 0)
+        self.assertEqual(empty_set.values, set())
+        
+        # Test set with a single element
+        single_element = EssenceSet([42], "find S: set of int(0..100)")
+        self.assertEqual(len(single_element), 1)
+        self.assertEqual(single_element.values, {42})
+
+    
+    def test_essence_sequence(self):
+        # Testing a sequence with integer elements
+        seq_data = [9, 10, 11, 12, 13]
+        essence_seq = EssenceSequence(seq_data, "sequence(size 5) of int(9..16)")
+        
+        # Test basic properties
+        self.assertEqual(essence_seq.domain_type, int)
+        self.assertEqual(len(essence_seq), 5)
+        
+        # Test sequence values
+        self.assertEqual(essence_seq.values, seq_data)
+        
+        # Test string representation
+        str_repr = str(essence_seq)
+        self.assertTrue(isinstance(str_repr, str))
+        self.assertEqual(str_repr, str(seq_data))
+        
+        # Test iteration
+        elements = []
+        for element in essence_seq:
+            elements.append(element)
+        self.assertEqual(elements, seq_data)
+        
+        # Test hash implementation
+        self.assertTrue(isinstance(hash(essence_seq), int))
+        self.assertEqual(hash(essence_seq), hash(tuple(seq_data)))
+        
+        # Test with different types
+        bool_seq = EssenceSequence([True, False, True], "sequence of bool")
+        self.assertEqual(bool_seq.domain_type, bool)
+        self.assertEqual(bool_seq.values, [True, False, True])
+        self.assertEqual(len(bool_seq), 3)
+        
+        # Test sequence with duplicate values (should preserve duplicates unlike sets)
+        duplicated_data = [1, 2, 3, 3, 4, 5]
+        duplicate_seq = EssenceSequence(duplicated_data, "sequence of int(1..10)")
+        self.assertEqual(len(duplicate_seq), 6)  # Should be 6, not 5 (preserves duplicates)
+        self.assertEqual(duplicate_seq.values, duplicated_data)
+
+    def test_essence_sequence_edge_cases(self):
+        # Test empty sequence
+        empty_seq = EssenceSequence([], "sequence of int(1..10)")
+        self.assertEqual(len(empty_seq), 0)
+        self.assertEqual(empty_seq.values, [])
+        
+        # Test sequence with a single element
+        single_element = EssenceSequence([42], "sequence of int(0..100)")
+        self.assertEqual(len(single_element), 1)
+        self.assertEqual(single_element.values, [42])
+        
+        # Test sequence with string elements
+        str_seq = EssenceSequence(["apple", "banana", "cherry"], "sequence of string")
+        self.assertEqual(str_seq.domain_type, str)
+        self.assertEqual(str_seq.values, ["apple", "banana", "cherry"])
+        self.assertEqual(len(str_seq), 3)
+        
+        # Test iteration restart
+        # First iteration
+        elements1 = []
+        for element in str_seq:
+            elements1.append(element)
+        self.assertEqual(elements1, ["apple", "banana", "cherry"])
+        
+        # Second iteration should restart from beginning
+        elements2 = []
+        for element in str_seq:
+            elements2.append(element)
+        self.assertEqual(elements2, ["apple", "banana", "cherry"])
+
+        
 if __name__ == "__main__":
     unittest.main()
