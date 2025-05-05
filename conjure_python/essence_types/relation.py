@@ -26,7 +26,7 @@ class EssenceRelation(EssenceType):
             return self.values[arg]
         assert isinstance(arg,tuple), f"expected int or tuple, got: {type(arg)}"
         ret_val = self.values[arg[0]]
-        for idx in arg[:1]:
+        for idx in arg[1:]:
             ret_val = ret_val[idx]
         return ret_val
 
