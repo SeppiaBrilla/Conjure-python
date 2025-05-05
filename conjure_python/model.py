@@ -2,10 +2,9 @@ import json
 from copy import deepcopy
 from typing import Any
 
-from conjure_python.essence_types.helpers import is_set
 from .conjure import Conjure
 from .solution import EssenceSolution
-from .essence_types import EssenceFunction, EssenceMatrix, EssenceRecord, EssenceRelation, EssenceType, EssenceTuple, EssenceSet, is_bool, is_function, is_int, is_matrix, is_record, is_relation, is_tuple
+from .essence_types import EssenceFunction, EssenceMatrix, EssenceRecord, EssenceRelation, EssenceType, EssenceTuple, EssenceSet, EssenceSequence, is_bool, is_function, is_int, is_matrix, is_record, is_relation, is_tuple, is_set, is_sequence
 
 class EssenceModel:
     def __init__(self, model:str="", solver:str|None=None, **kwargs) -> None:
@@ -157,6 +156,8 @@ class EssenceModel:
                     new_sol[name] = bool(sol[name])
                 elif is_set(dom):
                     new_sol[name] = EssenceSet(sol[name], dom)
+                elif is_sequence(dom):
+                    new_sol[name] = EssenceSequence(sol[name], dom)
                 else:
                     new_sol[name] = sol[name]
             solutions.append(new_sol)
