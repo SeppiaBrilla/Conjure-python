@@ -9,6 +9,8 @@ def cast(str_type:str):
         return set
     if str_type == 'list': 
         return list
+    if str_type == 'bool':
+        return bool
     return str
 
 def is_int(domain:str) -> bool:

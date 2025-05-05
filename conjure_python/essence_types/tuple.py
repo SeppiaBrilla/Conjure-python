@@ -4,7 +4,7 @@ from .helpers import cast
 class EssenceTuple(EssenceType):
     def __init__(self, values: list, essece_types: str) -> None:
         str_types = essece_types.split(',')
-        str_types = [t.replace(" ", "").replace("tuple(", "").split('(')[0] for t in str_types]
+        str_types = [t.replace(" ", "").replace("tuple(", "").replace(')','').split('(')[0] for t in str_types]
         self.types = [cast(t.split('(')[0]) for t in str_types]
         self.values = tuple([self.types[i](t) for i,t in enumerate(values)])
         self.__idx = 0
