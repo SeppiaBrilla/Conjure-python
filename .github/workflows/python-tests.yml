@@ -27,10 +27,10 @@ jobs:
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         
-    - name: Install package in development mode
+    - name: Add project directory to PYTHONPATH
       run: |
-        pip install -e .
+        echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
         
     - name: Run tests
       run: |
-        pytest test_types.py -v
+        pytest tests/test_types.py -v
