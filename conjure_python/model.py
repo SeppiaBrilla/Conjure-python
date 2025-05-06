@@ -7,7 +7,23 @@ from .solution import EssenceSolution
 from .essence_types import EssenceFunction, EssenceMatrix, EssenceRecord, EssenceRelation, EssenceType, EssenceTuple, EssenceSet, EssenceSequence, is_bool, is_function, is_int, is_matrix, is_record, is_relation, is_tuple, is_set, is_sequence
 
 class EssenceModel:
+    """
+    Class representing an Essence model and its solver configuration.
+
+    Args:
+        model (str, optional): Initial Essence model string
+        solver (str, optional): Solver name
+        **kwargs: Additional arguments for Conjure initialization
+    """
     def __init__(self, model:str="", solver:str|None=None, **kwargs) -> None:
+        """
+        Initialize the EssenceModel instance.
+
+        Args:
+            model (str, optional): Initial Essence model string
+            solver (str, optional): Solver name
+            **kwargs: Additional arguments for Conjure initialization
+        """
         self.__model = model
         self.__solver = solver
         self.__time_limit = None
@@ -18,34 +34,80 @@ class EssenceModel:
         self.__params = {}
 
     def append(self, new_constraint:str) -> None:
+        """
+        Append a new constraint to the model.
+
+        Args:
+            new_constraint (str): New constraint to add
+        """
         if self.__model != '':
             self.__model += '\n' + new_constraint
         else:
             self.__model = new_constraint
 
     def set_solver(self, solver_name:str) -> None:
+        """
+        Set the solver for the model.
+
+        Args:
+            solver_name (str): Name of the solver
+        """
         self.__solver = solver_name
 
     def set_random_seed(self, random_seed:int) -> None:
+        """
+        Set the random seed for the solver.
+
+        Args:
+            random_seed (int): Random seed value
+        """
         self.__seed = str(random_seed)
 
     def set_time_limit(self, time_limit:int) -> None:
+        """
+        Set the time limit for the solver.
+
+        Args:
+            time_limit (int): Time limit in seconds
+        """
         self.__time_limit = time_limit
     
     def set_threads(self, threads:int) -> None:
+        """
+        Set the number of threads for the solver.
+
+        Args:
+            threads (int): Number of threads
+        """
         self.__threads = str(threads)
 
     def clear_model(self) -> None:
+        """
+        Clear the current model string.
+        """
         self.__model = ""
 
     def clear_parameters(self) -> None:
+        """
+        Clear all parameters.
+        """
         self.__params = {}
     
     def clear(self) -> None:
+        """
+        Clear both model and parameters.
+        """
         self.clear_model()
         self.clear_parameters()
 
     def add_parameters(self, name:str, value:Any) -> None:
+        """
+        Add a parameter to the model.
+
+        Args:
+            name (str): Parameter name
+            value (Any): Parameter value
+        """
         self.__params[name] = value
 
     def __get_essence_representation(self) -> tuple[list[dict], list[dict]]:
@@ -59,6 +121,20 @@ class EssenceModel:
         return params, out
 
     def solve(self, parameters:dict|None=None, solver_arguments:str|None=None) -> EssenceSolution:
+        """
+        Solve the model with given parameters and solver arguments. 
+        if no parameters are given, the ones set in the model are used. if no solver arguments are given, the ones set in the model are used. 
+        if no solver is set, the default solver is used.
+        Args:
+            parameters (dict, optional): Parameters for the model
+            solver_arguments (str, optional): Additional solver arguments
+
+        Returns:
+            EssenceSolution: Solution object containing results
+
+        Raises:
+            Exception: If parameters are missing
+        """
         params = self.__params if parameters is None else parameters
         essence_in, essence_out = self.__get_essence_representation()
         if not self.check_params(params, essence_in):
@@ -79,6 +155,15 @@ class EssenceModel:
         return EssenceSolution(raw_solution, python_essence_solution)
 
     def __build_solver_args(self) -> str:
+        """
+        Build solver-specific arguments string.
+
+        Returns:
+            str: Solver arguments string
+
+        Raises:
+            Exception: If invalid solver configuration is provided
+        """
         if self.__time_limit is None and self.__threads is None and self.__seed is None:
             return ""
         if self.__solver is None:
@@ -123,6 +208,16 @@ class EssenceModel:
             return ""
 
     def __build_essence_solution(self, solution:list[dict], essence_representation:tuple[list[dict], list[dict]]) -> list[dict[str, EssenceType]]:
+        """
+        Convert raw solution to Essence types.
+
+        Args:
+            solution (list[dict]): Raw solution data
+            essence_representation (tuple): Tuple of input/output parameters
+
+        Returns:
+            list[dict[str, EssenceType]]: List of solutions with Essence types
+        """
         essence_in, essence_out = essence_representation
         essence_out = deepcopy(essence_out)
         out_param_dict = {}
@@ -164,6 +259,16 @@ class EssenceModel:
         return solutions
 
     def check_params(self, params:dict, essence_params:list[dict]) -> bool:
+        """
+        Check if all required parameters are present.
+
+        Args:
+            params (dict): Provided parameters
+            essence_params (list[dict]): Required parameters from model
+
+        Returns:
+            bool: True if all parameters are present, False otherwise
+        """
         param_names = [p['name'] for p in essence_params]
         for p_name in param_names:
             if not p_name in params:

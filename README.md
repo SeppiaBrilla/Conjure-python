@@ -1,53 +1,109 @@
-# Welcome to Conjure-python!
+# Conjure-python
 
-This python library allow you to blend your python app with conjure and find solutions for your models.
+A Python interface for solving constraint problems using Conjure and the Essence language.
 
-## A simple tutorial
-First, let's import the necessary dependencies. The only mandatory one is the ```EssenceModel``` class, all the others are accessory you can skip.
+## Overview
 
-### Solving an instance
-To solve an instance you have to declare a model via the ```EssenceModel``` class. You can either add the model directly while declaring the class or afterwards in your code.
+Conjure-python provides a Python interface to interact with Conjure, a constraint solver that uses the Essence language for problem specification. The library allows you to:
 
-```py 
+1. Define constraint problems using Essence syntax
+2. Solve problems using different solvers
+3. Access solutions in both raw and Python-native formats
+4. Work with various Essence data types as native Python objects
+
+## Core Components
+
+### EssenceModel
+The main class for defining and solving constraint problems:
+- Add constraints using Essence syntax
+- Set solver configurations
+- Add parameters
+- Solve the model
+- Access solutions
+
+### EssenceSolution
+Represents solutions to constraint problems:
+- Access solutions in raw or Python-native format
+- Iterate over multiple solutions
+- Get solution state (SAT/UNSAT)
+- Convert solutions to string format
+
+## Implemented Types
+
+All types inherit from `EssenceType` and share common characteristics:
+
+### Common Type Characteristics
+- Type conversion from Essence to Python
+- Type checking and validation
+- String representation
+- Iteration support (where applicable)
+- Type-specific methods
+
+### Collection Types
+- **Matrix**: Multi-dimensional array with shape information
+  - Methods: `shape()`, `__getitem__()` with nested indices
+  - Supports: Indexing by multiple indices
+
+- **Sequence**: Ordered collection of elements
+  - Methods: `__getitem__()` with integer indices
+  - Supports: Length, iteration
+
+- **Set**: Unordered collection of unique elements
+  - Methods: `__getitem__()` with integer indices
+  - Supports: Length, iteration
+
+- **Tuple**: Fixed-size ordered collection
+  - Methods: `__getitem__()` with integer indices
+  - Supports: Length, iteration
+
+### Structured Types
+- **Record**: Named fields with specific types
+  - Methods: `keys()`, `values()`, `items()`
+  - Supports: Field access by name
+
+- **Relation**: Collection of tuples representing relationships
+  - Methods: `__getitem__()` with nested indices
+  - Supports: Length, iteration
+
+### Mapping Types
+- **Function**: Maps domain to codomain
+  - Methods: `__getitem__()` with domain values
+  - Supports: Domain and codomain type checking
+
+### Basic Types
+- **Integer**: Numeric values
+- **Boolean**: True/False values
+
+## Usage Example
+
+```python
 from conjure_python import EssenceModel
 
+# Create model
 model = EssenceModel()
 
-#add your model
-model_str = """
-...
-"""
-model.append(model_str)
-```
+# Add constraints
+model.append("find x: int(0..10)")
+model.append("find y: int(0..10)")
+model.append("given z: int(0..10)")
+model.append("x + y = z")
 
-To add your parameters you can either add them one by one via the ```add_parameters(name, value)``` method or you can pass all your parameters as a dictionary to the ```solve``` method.
+# Set solver
+model.set_solver("chuffed")
 
-Once you call the solve method it will return an instance of the ```EssenceSolution``` class which will contain a ```state``` variable indicating if conjure was able to find a solution and a list of solutions found by the solver. The solutions can be indexed using an integer index and they can be accessed as raw solutions (by setting the ```mode``` variable to "raw") or a python-native solution (by setting the ```mode``` variable to "python"). In the second case, all variables will have the correct type and you will be able to use them as native python objects.
+# Add parameters
+model.add_parameters("z", 5)
 
-```py
-solutions = model.solve({})
+# Solve
+solutions = model.solve()
+
+# Access solutions
 if solutions.state == "SAT":
     for sol in solutions:
-        print(sol)
+        print(sol)  # Prints solutions in Python-native format
 else:
-    print("solution not found")
+    print("No solution found")
 ```
-
-## The python-native types
-Currently the following native python types are supported: int, bool, function, matrix, record, tuples and relation. 
-For the int, bool and tuple types are simple python types.
-All the other types derive from the base class ```EssenceType``` which implements the ```__hash__```, ```__len__```, ```__str__```, ```__iter__``` and ```__next__``` methods.
-### The matrix type (EssenceMatrix)
-The matrix type has a tuple called ```shape``` which contains an integer value that represents the number of elements for each dimension of the matrix.
-Another tuple, ```index_types``` contains the type of each index (in order) of the matrix.
-Finally, the matrix can be directly indexed with a single value or a tuple of value to get the elements of the matrix.
-### The function type (EssenceFunction)
-The function type can be directly called to access its values. It also has a dictionary ```types``` with two keys: ```"codomain"``` and ```"domain"``` containing, respectively the codomain type and domain type of the function. The property ```domain_values``` is a set with all the values of the domain while the property ```codomain_values``` is a set with all the values of the codomain.
-### The relation type (EssenceRelation)
-The relation type can also be indexed via an integer value to get the corresponding element. The relation values are simple tuples. The type of each element of the tuple can be accessed via the property ```relation_type``` of the relation type. The property ```relations_len``` represents the number of elements in each tuple.
-## The record type (EssenceRecord)
-The record type is a simple dictionary and can be used as such. It implements the ```keys()```, ```items()``` and ```values()``` methods. It can also has a property ```record_types``` which is a dictionary containing the type of each key of the record.
-
 ## check for conjure 
 if you want to check if conjure is available on your system by using the ```is_conjure_available()``` function which returns a boolean value.
 ```py
