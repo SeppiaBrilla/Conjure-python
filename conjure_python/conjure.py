@@ -95,6 +95,18 @@ class Conjure:
         if output.returncode != 0:
             raise Exception(output.stderr.decode('utf-8'))
         return json.loads(output.stdout.decode('utf-8'))
+    
+    def get_required_parameters(self, model:str) -> list[str]:
+        all_parameters = self.get_model_parameters(model)
+        required_parameters = []
+        for param in all_parameters:
+            param_kind = param.get("kind", '')
+            param_val = param.get("values", None)
+            if param_val is not None:
+                continue
+            if param_kind == "Given" or param_kind == "enumerated type":
+                required_parameters.append(param['name'])
+        return required_parameters
 
     def __load_solution(self) -> list[dict]:
         """
@@ -172,10 +184,10 @@ class Conjure:
             bool: True if Conjure is available, False otherwise
         """
         try:
-            shell_out = subprocess.run(["conjure", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            shell_out = subprocess.run(["conjure", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             return_code = shell_out.returncode
             return return_code == 0
-        except:
+        except Exception as e:
             return False
 
 def is_conjure_available() -> bool:

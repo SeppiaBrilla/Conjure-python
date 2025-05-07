@@ -258,6 +258,13 @@ class EssenceModel:
             solutions.append(new_sol)
         return solutions
 
+    def getStats(self) -> dict|None:
+        try:
+            stats = self.__conjure.get_infos()
+            return stats
+        except Exception as e:
+            return None
+
     def check_params(self, params:dict, essence_params:list[dict]) -> bool:
         """
         Check if all required parameters are present.
@@ -274,3 +281,9 @@ class EssenceModel:
             if not p_name in params:
                 return False
         return True
+
+    def get_all_model_params(self, model:str="") -> list[dict]:
+        return self.__conjure.get_model_parameters(model if model != "" else self.__model)
+    
+    def get_required_params(self, model:str="") -> list[str]:
+        return self.__conjure.get_required_parameters(model if model != "" else self.__model)

@@ -118,3 +118,6 @@ class EssenceSolution:
             sol_str = '\n'.join([f'{k} : {v}' for k,v in solution.items()])
             solution_strs.append(f"solution {i}: \n {sol_str}")
         return "\n".join(solution_strs)
+    
+    def __dict__(self):
+        return self.raw
