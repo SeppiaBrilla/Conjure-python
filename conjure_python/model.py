@@ -218,18 +218,9 @@ class EssenceModel:
         Returns:
             list[dict[str, EssenceType]]: List of solutions with Essence types
         """
-        essence_in, essence_out = essence_representation
+        _, essence_out = essence_representation
         essence_out = deepcopy(essence_out)
         out_param_dict = {}
-        for out_param in essence_out:
-            for in_param in essence_in:
-                if in_param['name'] in out_param['domain']:
-                    if 'int' in in_param['domain'] or 'bool' in in_param['domain']:
-                        out_param['domain'].replace(in_param['name'], in_param['domain'])
-                        out_param['to_replace'] = False
-                    else:
-                        out_param['to_replace'] = True
-            out_param_dict[out_param['name']] = out_param
         solutions = []
         for sol in solution:
             new_sol = {}
